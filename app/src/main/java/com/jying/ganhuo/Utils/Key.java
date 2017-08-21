@@ -6,5 +6,5 @@ package com.jying.ganhuo.Utils;
 
 public class Key {
     public static String API="http://gank.io/api/data/";  //http://gank.io/api/data/Android/10/1   类型/个数/第几页
-    public static String RANDOM_API="http://gank.io/api/random/data/";  //http://gank.io/api/random/data/Android/20
+    public static String RANDOM_API="http://gank.io/api/random/";  //http://gank.io/api/random/data/Android/20
 }

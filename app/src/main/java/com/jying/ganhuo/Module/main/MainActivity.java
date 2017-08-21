@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     private void initViewPager() {
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        viewpager = (ViewPager) findViewById(R.id.viewpager);
+//        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+//        viewpager = (ViewPager) findViewById(R.id.viewpager);
         Resources res = getResources();
         String tabs[] = res.getStringArray(R.array.tab_name);
         tabLayout.addTab(tabLayout.newTab().setText(tabs[0]));

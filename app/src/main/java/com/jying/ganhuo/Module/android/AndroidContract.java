@@ -1,5 +1,7 @@
 package com.jying.ganhuo.Module.android;
 
+import android.os.Handler;
+
 import com.jying.ganhuo.Base.BasePresenter;
 import com.jying.ganhuo.Base.BaseView;
 
@@ -12,6 +14,6 @@ public class AndroidContract {
 
     }
     interface Presenter extends BasePresenter{
-
+        void getAndroidData(Handler handler);
     }
 }

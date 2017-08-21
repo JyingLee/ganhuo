@@ -1,6 +1,8 @@
 package com.jying.ganhuo.Module.android;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -32,6 +34,19 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
     @BindView(R.id.android_recyclewview)
     RecyclerView recyclerView;
     AndroidAdapter androidAdapter;
+    List<AndroidBean> androidData=new ArrayList<>();
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 1:
+                    androidData= (List<AndroidBean>) msg.obj;
+                    initRecyclewView();
+                    break;
+            }
+        }
+    };
 
     public static AndroidFragment getInstance(int page) {
         AndroidFragment androidFragment = new AndroidFragment();
@@ -50,15 +65,7 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
     }
 
     private void initRecyclewView() {
-        List<AndroidBean>beans=new ArrayList<>();
-        for (int i=0;i<10;i++){
-            AndroidBean test=new AndroidBean();
-            test.setAuthor("Jying");
-            test.setTime("2017/8/20");
-            test.setDesc("这是个测试");
-            beans.add(test);
-        }
-        androidAdapter=new AndroidAdapter(getActivity(),beans);
+        androidAdapter=new AndroidAdapter(getActivity(),androidData);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -71,7 +78,14 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
         presenter = new AndroidPresenter(this);
         View view=inflater.inflate(R.layout.fragment_android,container,false);
         recyclerView= (RecyclerView) view.findViewById(R.id.android_recyclewview);
-        initRecyclewView();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                presenter.getAndroidData(handler);
+            }
+        }).start();
+
         return view;
     }
 
