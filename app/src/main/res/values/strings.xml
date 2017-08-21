@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ganhuo</string>
+
+    <string-array name="tab_name">
+        <item>Android</item>
+        <item>Ios</item>
+        <item>妹子图</item>
+        <item>休闲视频</item>
+    </string-array>
 </resources>
