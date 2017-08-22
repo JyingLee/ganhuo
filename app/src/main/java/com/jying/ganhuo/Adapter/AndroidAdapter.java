@@ -1,14 +1,18 @@
 package com.jying.ganhuo.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.jying.ganhuo.Bean.AndroidBean;
+import com.jying.ganhuo.Module.Web.WebActivity;
 import com.jying.ganhuo.R;
 
 import java.util.ArrayList;
@@ -38,12 +42,26 @@ public class AndroidAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof vh_android) {
             final vh_android vh = (vh_android) holder;
             vh.desc.setText(beans.get(position).getDesc());
             vh.author.setText(beans.get(position).getAuthor());
             vh.time.setText(beans.get(position).getTime());
+            if (beans.get(position).getImage_url() != null) {
+                Glide.with(context).load(beans.get(position).getImage_url()).into(vh.image);
+            }else {
+                vh.image.setVisibility(View.GONE);
+            }
+            vh.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url=beans.get(position).getUrl();
+                    Intent intent=new Intent(context, WebActivity.class);
+                    intent.putExtra("url",url);
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 
@@ -62,6 +80,7 @@ public class AndroidAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView desc;
         TextView time;
         TextView author;
+        LinearLayout layout;
 
         public vh_android(View inflate) {
             super(inflate);
@@ -69,6 +88,7 @@ public class AndroidAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             desc = (TextView) inflate.findViewById(R.id.item_android_desc);
             time = (TextView) inflate.findViewById(R.id.item_android_time);
             author = (TextView) inflate.findViewById(R.id.item_android_author);
+            layout= (LinearLayout) inflate.findViewById(R.id.item_android_layout);
         }
     }
 }

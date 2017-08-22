@@ -64,7 +64,10 @@ public class AndroidPresenter implements AndroidContract.Presenter {
                         bean.setAuthor(dataJson.getString("who"));
                         bean.setUrl(dataJson.getString("url"));
                         if (dataJson.has("images")){
-                            bean.setImage_url(dataJson.getString("images"));
+                            String image_url;
+                            JSONArray urljason=new JSONArray(dataJson.getString("images"));
+                            image_url= (String) urljason.opt(0);
+                            bean.setImage_url(image_url);
                         }
                         list.add(bean);
                     }
@@ -82,7 +85,7 @@ public class AndroidPresenter implements AndroidContract.Presenter {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                mView.showToast("没网络了知道不?!");
             }
         });
     }
