@@ -1,4 +1,4 @@
-package com.jying.ganhuo.Module.android;
+package com.jying.ganhuo.Module.ios;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,46 +14,53 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.jying.ganhuo.Adapter.AndroidAdapter;
-import com.jying.ganhuo.Bean.AndroidBean;
+import com.jying.ganhuo.Adapter.IosAdapter;
+import com.jying.ganhuo.Bean.IosBean;
 import com.jying.ganhuo.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Jying on 2017/8/19.
+ * Created by Jying on 2017/8/22.
  */
 
-public class AndroidFragment extends Fragment implements AndroidContract.View {
-    AndroidContract.Presenter presenter;
+public class IosFragment extends Fragment implements IosContract.View {
+    IosContract.Presenter presenter;
     private int count;
-    @BindView(R.id.android_recyclewview)
-    RecyclerView recyclerView;
-    AndroidAdapter androidAdapter;
-    List<AndroidBean> androidData=new ArrayList<>();
+    RecyclerView iosRecyclewView;
+    private List<IosBean>lists=new ArrayList<>();
+    IosAdapter iosAdapter;
+
     Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what){
-                case 1:
-                    androidData= (List<AndroidBean>) msg.obj;
+                case 0:
+                    lists= (List<IosBean>) msg.obj;
                     initRecyclewView();
                     break;
             }
         }
     };
 
-    public static AndroidFragment getInstance(int count) {
-        AndroidFragment androidFragment = new AndroidFragment();
+    private void initRecyclewView() {
+        iosAdapter=new IosAdapter(getActivity(),lists);
+        iosRecyclewView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
+        iosRecyclewView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
+        iosRecyclewView.setItemAnimator(new DefaultItemAnimator());
+        iosRecyclewView.setAdapter(iosAdapter);
+    }
+
+    public static IosFragment newInstance(int count) {
+        IosFragment iosFragment = new IosFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("count", count);
-        androidFragment.setArguments(bundle);
-        return androidFragment;
+        iosFragment.setArguments(bundle);
+        return iosFragment;
     }
 
     @Override
@@ -64,33 +71,24 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
         }
     }
 
-    private void initRecyclewView() {
-        androidAdapter=new AndroidAdapter(getActivity(),androidData);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(androidAdapter);
-    }
-
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ButterKnife.bind(getActivity());
-        presenter = new AndroidPresenter(this);
-        View view=inflater.inflate(R.layout.fragment_android,container,false);
-        recyclerView= (RecyclerView) view.findViewById(R.id.android_recyclewview);
-
+        presenter=new IosPresenter(this);
+        View view=inflater.inflate(R.layout.fragment_ios,container,false);
+        iosRecyclewView= (RecyclerView) view.findViewById(R.id.ios_recyclewview);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                presenter.getAndroidData(handler);
+                presenter.getIosData(handler);
             }
         }).start();
-
         return view;
     }
 
     @Override
-    public void setPresenter(AndroidContract.Presenter presenter) {
+    public void setPresenter(IosContract.Presenter presenter) {
         this.presenter = presenter;
     }
 

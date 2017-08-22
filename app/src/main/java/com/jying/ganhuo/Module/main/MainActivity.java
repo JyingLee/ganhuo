@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.jying.ganhuo.Adapter.MainpagerAdapter;
 import com.jying.ganhuo.Module.android.AndroidFragment;
-import com.jying.ganhuo.Module.android.testFragment;
+import com.jying.ganhuo.Module.ios.IosFragment;
 import com.jying.ganhuo.R;
 
 import java.util.ArrayList;
@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     private void initViewPager() {
-//        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-//        viewpager = (ViewPager) findViewById(R.id.viewpager);
         Resources res = getResources();
         String tabs[] = res.getStringArray(R.array.tab_name);
         tabLayout.addTab(tabLayout.newTab().setText(tabs[0]));
@@ -54,11 +52,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         tabLayout.setTabTextColors(getResources().getColor(R.color.colorPrimary), getResources().getColor(R.color.colorPrimaryDark));
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         fragments = new ArrayList<>();
-        AndroidFragment androidFragment = AndroidFragment.getInstance(1);
+        AndroidFragment androidFragment = AndroidFragment.getInstance(20);
         fragments.add(androidFragment);
 
-        testFragment test=testFragment.getInstance(2);
-        fragments.add(test);
+
+        IosFragment iosFragment=IosFragment.newInstance(20);
+        fragments.add(iosFragment);
 
 
         pagerAdapter = new MainpagerAdapter(getSupportFragmentManager(), fragments);
