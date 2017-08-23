@@ -19,6 +19,6 @@ public class MainPresenter implements MainContract.presenter {
 
     @Override
     public void onDestroy() {
-
     }
+
 }

@@ -9,7 +9,6 @@ import com.jying.ganhuo.Base.BaseView;
 
 public class MainContract {
     interface View extends BaseView<presenter>{
-
     }
     interface  presenter extends BasePresenter{
 

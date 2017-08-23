@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -44,5 +46,12 @@ public class showActivity extends AppCompatActivity {
                 .thumbnail(0.1f)//表示为原图的十分之一
                 .apply(options)
                 .into(showImage);
+        showImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(showActivity.this,"想保存?拒绝?!",Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
 }
