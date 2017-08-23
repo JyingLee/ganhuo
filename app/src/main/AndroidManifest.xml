@@ -3,9 +3,15 @@
     package="com.jying.ganhuo">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络通信-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />  <!-- 获取设备信息 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取MAC地址-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写sdcard，storage等等 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 允许程序录制音频 -->
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/smile"
+        android:icon="@mipmap/tuzi"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -23,6 +29,11 @@
         <activity
             android:name=".Module.welfare.showActivity"
             android:theme="@style/ImageScale" />
+
+        <meta-data
+            android:name="PGYER_APPID"
+            android:value="83df218906fbda3e25fa59ea71165a53" >
+        </meta-data>
     </application>
 
 </manifest>

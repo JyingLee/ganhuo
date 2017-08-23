@@ -1,6 +1,8 @@
 package com.jying.ganhuo.Module.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -16,6 +18,9 @@ import com.jying.ganhuo.Module.ios.IosFragment;
 import com.jying.ganhuo.Module.video.VideoFragment;
 import com.jying.ganhuo.Module.welfare.WelfareFragment;
 import com.jying.ganhuo.R;
+import com.pgyersdk.javabean.AppBean;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,13 +47,43 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         setContentView(R.layout.activity_main);
         con = this;
         instance = this;
+        setUpdate();
         ButterKnife.bind(this);
         mPresenter = new MainPresenter(this);
         initViewPager();
     }
 
-    public void setImage() {
-        imageBar.setBackgroundResource(R.mipmap.c1);
+    private void setUpdate() {
+        PgyUpdateManager.setIsForced(false);
+        PgyUpdateManager.register(MainActivity.this, "",
+                new UpdateManagerListener() {
+                    @Override
+                    public void onUpdateAvailable(final String result) {
+                        Toast.makeText(MainActivity.this,"又更新啦!",Toast.LENGTH_SHORT).show();
+                        final AppBean appBean = getAppBeanFromString(result);
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("更新")
+                                .setMessage("又是一个惊喜")
+                                .setNegativeButton(
+                                        "确定",
+                                        new DialogInterface.OnClickListener() {
+
+                                            @Override
+                                            public void onClick(
+                                                    DialogInterface dialog,
+                                                    int which) {
+                                                startDownloadTask(
+                                                        MainActivity.this,
+                                                        appBean.getDownloadURL());
+                                            }
+                                        }).show();
+                    }
+
+                    @Override
+                    public void onNoUpdateAvailable() {
+                        Toast.makeText(MainActivity.this,"已经是最新版本",Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
