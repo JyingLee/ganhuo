@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.jying.ganhuo.Adapter.MainpagerAdapter;
 import com.jying.ganhuo.Module.android.AndroidFragment;
 import com.jying.ganhuo.Module.ios.IosFragment;
+import com.jying.ganhuo.Module.welfare.WelfareFragment;
 import com.jying.ganhuo.R;
 
 import java.util.ArrayList;
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         IosFragment iosFragment=IosFragment.newInstance(20);
         fragments.add(iosFragment);
+
+        WelfareFragment welfareFragment= WelfareFragment.newInstance(20);
+        fragments.add(welfareFragment);
 
 
         pagerAdapter = new MainpagerAdapter(getSupportFragmentManager(), fragments);
