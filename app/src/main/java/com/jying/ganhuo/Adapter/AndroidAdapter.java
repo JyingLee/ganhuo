@@ -25,9 +25,6 @@ import java.util.List;
 public class AndroidAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ANDROID = 1;
     private static final int FOOTVIEW = 2;
-    private static final int NOTSEE=1;
-    private static final int ISLOADING=2;
-    private int load_state;
     List<AndroidBean> beans = new ArrayList<>();
     Context context;
 

@@ -11,6 +11,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -34,9 +35,10 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
     RecyclerView recyclerView;
     AndroidAdapter androidAdapter;
     List<AndroidBean> androidData = new ArrayList<>();
-    SwipeRefreshLayout refreshLayout;
+    private SwipeRefreshLayout refreshLayout;
     private boolean isLoading = false;
     private int lastVisibleItemPosition;//最后一个可见的item
+    private boolean isRolling=false;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -53,12 +55,15 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
                             androidData = (List<AndroidBean>) msg.obj;
                             if (androidData != null) {
                                 androidAdapter.notifyDataSetChanged();
+                                showToast("已更新数据");
                             }
+                            isRolling=false;
+                            setRecyclewViewBug();
                             refreshLayout.setRefreshing(false);
                             break;
                         case 2:
-                            List<AndroidBean> newDatas = (List<AndroidBean>) msg.obj;
-                            androidAdapter.addMoreData(newDatas);
+                            List<AndroidBean>newDaras=(List<AndroidBean>) msg.obj;
+                            androidAdapter.addMoreData(newDaras);
                             androidAdapter.notifyItemRemoved(androidAdapter.getItemCount());
                             break;
                     }
@@ -107,8 +112,8 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                List<AndroidBean>newDatas=new ArrayList<>();
-                                presenter.getAndroidData(handler,newDatas,2);
+                                List<AndroidBean> newDatas = new ArrayList<>();
+                                presenter.getAndroidData(handler, newDatas, 2);
                                 isLoading = false;
                             }
                         }, 1000);
@@ -150,6 +155,8 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
             public void onRefresh() {
                 refreshLayout.setRefreshing(true);
                 if (presenter.isNetworkAvailable(getActivity())) {
+                    isRolling=true;
+                    setRecyclewViewBug();
                     androidData.clear();
                     presenter.getAndroidData(handler, androidData, 1);
                 } else {
@@ -169,5 +176,16 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
     public void showToast(CharSequence msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
-
+    public void setRecyclewViewBug() {
+        recyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (isRolling) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+    }
 }

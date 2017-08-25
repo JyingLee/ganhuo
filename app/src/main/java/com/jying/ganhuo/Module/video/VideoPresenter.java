@@ -51,23 +51,25 @@ public class VideoPresenter implements VideoContract.Presenter {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    String json = response.body().string();
-                    if (json==null)return;
-                    JSONObject jsonObject = new JSONObject(json);
-                    JSONArray jsonArray = jsonObject.getJSONArray("results");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject dealData = jsonArray.getJSONObject(i);
-                        VideoBean data = new VideoBean();
-                        data.setAuthor(dealData.getString("who"));
-                        data.setDesc(dealData.getString("desc"));
-                        data.setTime(dealData.getString("createdAt"));
-                        data.setUrl(dealData.getString("url"));
-                        lists.add(data);
+                    if (response.body().string() != null) {
+                        String json = response.body().string();
+                        if (json == null) return;
+                        JSONObject jsonObject = new JSONObject(json);
+                        JSONArray jsonArray = jsonObject.getJSONArray("results");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject dealData = jsonArray.getJSONObject(i);
+                            VideoBean data = new VideoBean();
+                            data.setAuthor(dealData.getString("who"));
+                            data.setDesc(dealData.getString("desc"));
+                            data.setTime(dealData.getString("createdAt"));
+                            data.setUrl(dealData.getString("url"));
+                            lists.add(data);
+                        }
+                        Message message = new Message();
+                        message.what = 0;
+                        message.obj = lists;
+                        handler.sendMessage(message);
                     }
-                    Message message = new Message();
-                    message.what = 0;
-                    message.obj = lists;
-                    handler.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
