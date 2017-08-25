@@ -1,5 +1,7 @@
 package com.jying.ganhuo.Module.Web;
 
+import android.content.Context;
+
 import com.jying.ganhuo.Base.BasePresenter;
 import com.jying.ganhuo.Base.BaseView;
 
@@ -13,6 +15,6 @@ public interface WebContract {
 
     }
     interface Presenter extends BasePresenter{
-
+        void clearWebViewCache(Context context);
     }
 }

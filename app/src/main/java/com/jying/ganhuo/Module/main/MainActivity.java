@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     MainpagerAdapter pagerAdapter;
     @BindView(R.id.image_bar)
     ImageView imageBar;
+    private long firstTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,22 +159,19 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Toast.makeText(con.getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-//    @Override
-//    public void setImages() {
-//        switch (viewpager.getCurrentItem()) {
-//            case 0:
-//                imageBar.setBackgroundResource(R.mipmap.c1);
-//                break;
-//            case 1:
-//                imageBar.setBackgroundResource(R.mipmap.c2);
-//                break;
-//            case 2:
-//                imageBar.setBackgroundResource(R.mipmap.c3);
-//                break;
-//            case 3:
-//                imageBar.setBackgroundResource(R.mipmap.c4);
-//                break;
-//        }
-//    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        long secondTime = System.currentTimeMillis();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ( secondTime - firstTime < 2000) {
+                System.exit(0);
+            } else {
+                Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                firstTime = System.currentTimeMillis();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 }

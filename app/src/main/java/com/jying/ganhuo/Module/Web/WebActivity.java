@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,7 +44,6 @@ public class WebActivity extends AppCompatActivity implements WebContract.View {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         url = bundle.getString("url");
-        Log.e("========", url);
         webSettings = webView.getSettings();
         webView.loadUrl(url);
         setting(webView, webSettings);
@@ -94,7 +92,7 @@ public class WebActivity extends AppCompatActivity implements WebContract.View {
 
 
         //优先使用缓存:
-        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         //缓存模式如下：
         //LOAD_CACHE_ONLY: 不使用网络，只读取本地缓存数据
         //LOAD_DEFAULT: （默认）根据cache-control决定是否从网络上取数据。
@@ -136,6 +134,7 @@ public class WebActivity extends AppCompatActivity implements WebContract.View {
         if (webView != null) {
             webView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
             webView.clearHistory();
+            presenter.clearWebViewCache(WebActivity.this);
 
             ((ViewGroup) webView.getParent()).removeView(webView);
             webView.destroy();
