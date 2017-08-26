@@ -55,23 +55,24 @@ public class WelfarePresenter implements WelfareContract.Presenter {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                        String json = response.body().string();
-                        JSONObject jsonObject = new JSONObject(json);
-                        JSONArray jsonArray = jsonObject.getJSONArray("results");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            WelfareBean welfareBean = new WelfareBean();
-                            JSONObject dealjson = jsonArray.getJSONObject(i);
-                            welfareBean.setImage_url(dealjson.getString("url"));
-                            welfareBean.setImage_who(dealjson.getString("who"));
-                            welfareDatas.add(welfareBean);
-                        }
-                        Message message = new Message();
-                        message.obj = welfareDatas;
-                        message.what = 0;
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("welfare_flag", flag);
-                        message.setData(bundle);
-                        handler.sendMessage(message);
+                    if (response == null) return;
+                    String json = response.body().string();
+                    JSONObject jsonObject = new JSONObject(json);
+                    JSONArray jsonArray = jsonObject.getJSONArray("results");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        WelfareBean welfareBean = new WelfareBean();
+                        JSONObject dealjson = jsonArray.getJSONObject(i);
+                        welfareBean.setImage_url(dealjson.getString("url"));
+                        welfareBean.setImage_who(dealjson.getString("who"));
+                        welfareDatas.add(welfareBean);
+                    }
+                    Message message = new Message();
+                    message.obj = welfareDatas;
+                    message.what = 0;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("welfare_flag", flag);
+                    message.setData(bundle);
+                    handler.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {

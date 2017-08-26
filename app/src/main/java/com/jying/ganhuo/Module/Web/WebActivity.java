@@ -150,7 +150,12 @@ public class WebActivity extends AppCompatActivity implements WebContract.View {
                 onBackPressed();
                 break;
             case R.id.share:
-                showToast("只有帅的人才可以分享!understand?!");
+//                showToast("只有帅的人才可以分享!understand?!");
+                Intent intent1=new Intent(Intent.ACTION_SEND);
+                intent1.putExtra(Intent.EXTRA_TEXT,url);
+                intent1.setType("text/plain");
+                startActivity(Intent.createChooser(intent1,"分享到"));
+
         }
         return super.onOptionsItemSelected(item);
     }

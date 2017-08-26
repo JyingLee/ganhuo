@@ -5,11 +5,21 @@
     android:background="#000000">
 
     <ImageView
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
         android:id="@+id/show_image"
-        android:src="@mipmap/ic_launcher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_launcher" />
+
+    <ImageButton
+        android:id="@+id/show_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/show_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="#000000"
+        android:src="@mipmap/download_icon" />
 </RelativeLayout>

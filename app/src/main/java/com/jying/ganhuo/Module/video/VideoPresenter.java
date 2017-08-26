@@ -45,7 +45,7 @@ public class VideoPresenter implements VideoContract.Presenter {
     }
 
     @Override
-    public void getVideoData(final Handler handler,final List<VideoBean> videoDatas,final int flag) {
+    public void getVideoData(final Handler handler, final List<VideoBean> videoDatas, final int flag) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Key.RANDOM_API).build();
         GanhuoService ganhuoService = retrofit.create(GanhuoService.class);
         Call<ResponseBody> call = ganhuoService.getData("休息视频", 8);
@@ -53,26 +53,27 @@ public class VideoPresenter implements VideoContract.Presenter {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                        String json = response.body().string();
-                        if (json == null) return;
-                        JSONObject jsonObject = new JSONObject(json);
-                        JSONArray jsonArray = jsonObject.getJSONArray("results");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject dealData = jsonArray.getJSONObject(i);
-                            VideoBean data = new VideoBean();
-                            data.setAuthor(dealData.getString("who"));
-                            data.setDesc(dealData.getString("desc"));
-                            data.setTime(dealData.getString("createdAt"));
-                            data.setUrl(dealData.getString("url"));
-                            videoDatas.add(data);
-                        }
-                        Message message = new Message();
-                        message.what = 0;
-                        message.obj = videoDatas;
-                        Bundle bundle=new Bundle();
-                        bundle.putInt("video_flag",flag);
-                        message.setData(bundle);
-                        handler.sendMessage(message);
+                    if (response == null) return;
+                    String json = response.body().string();
+                    if (json == null) return;
+                    JSONObject jsonObject = new JSONObject(json);
+                    JSONArray jsonArray = jsonObject.getJSONArray("results");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject dealData = jsonArray.getJSONObject(i);
+                        VideoBean data = new VideoBean();
+                        data.setAuthor(dealData.getString("who"));
+                        data.setDesc(dealData.getString("desc"));
+                        data.setTime(dealData.getString("createdAt"));
+                        data.setUrl(dealData.getString("url"));
+                        videoDatas.add(data);
+                    }
+                    Message message = new Message();
+                    message.what = 0;
+                    message.obj = videoDatas;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("video_flag", flag);
+                    message.setData(bundle);
+                    handler.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -86,6 +87,7 @@ public class VideoPresenter implements VideoContract.Presenter {
             }
         });
     }
+
     public boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);

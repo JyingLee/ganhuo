@@ -53,31 +53,32 @@ public class IosPresenter implements IosContract.Presenter {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                        String json = response.body().string();
-                        JSONObject jsonObject = new JSONObject(json);
-                        JSONArray jsonArray = jsonObject.getJSONArray("results");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            IosBean bean = new IosBean();
-                            JSONObject dataJson = jsonArray.getJSONObject(i);
-                            bean.setDesc(dataJson.getString("desc"));
-                            bean.setTime(dataJson.getString("createdAt"));
-                            bean.setAuthor(dataJson.getString("who"));
-                            bean.setUrl(dataJson.getString("url"));
-                            if (dataJson.has("images")) {
-                                String image_url;
-                                JSONArray urljason = new JSONArray(dataJson.getString("images"));
-                                image_url = (String) urljason.opt(0);
-                                bean.setImage_url(image_url);
-                            }
-                            iosBeans.add(bean);
+                    if (response == null) return;
+                    String json = response.body().string();
+                    JSONObject jsonObject = new JSONObject(json);
+                    JSONArray jsonArray = jsonObject.getJSONArray("results");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        IosBean bean = new IosBean();
+                        JSONObject dataJson = jsonArray.getJSONObject(i);
+                        bean.setDesc(dataJson.getString("desc"));
+                        bean.setTime(dataJson.getString("createdAt"));
+                        bean.setAuthor(dataJson.getString("who"));
+                        bean.setUrl(dataJson.getString("url"));
+                        if (dataJson.has("images")) {
+                            String image_url;
+                            JSONArray urljason = new JSONArray(dataJson.getString("images"));
+                            image_url = (String) urljason.opt(0);
+                            bean.setImage_url(image_url);
                         }
-                        Message msg = new Message();
-                        msg.obj = iosBeans;
-                        msg.what = 0;
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("ios_flag", flag);
-                        msg.setData(bundle);
-                        handler.sendMessage(msg);
+                        iosBeans.add(bean);
+                    }
+                    Message msg = new Message();
+                    msg.obj = iosBeans;
+                    msg.what = 0;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("ios_flag", flag);
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {

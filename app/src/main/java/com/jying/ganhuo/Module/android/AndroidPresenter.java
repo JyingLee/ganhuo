@@ -55,6 +55,7 @@ public class AndroidPresenter implements AndroidContract.Presenter {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
+                    if (response==null)return;
                         String json = response.body().string();
                         JSONObject jsonObject = new JSONObject(json);
                         JSONArray jsonArray = jsonObject.getJSONArray("results");
