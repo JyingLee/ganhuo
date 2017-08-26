@@ -27,6 +27,7 @@ public class WelfareAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private List<WelfareBean> lists;
     private static final int WELFARE = 1;
+    private static final int FOOTVIEW=2;
 
     public WelfareAdapter(Context context, List<WelfareBean> lists) {
         this.context = context;
@@ -37,6 +38,8 @@ public class WelfareAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == WELFARE) {
             return new vh_welfare(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_welfare, parent, false));
+        } else if (viewType == FOOTVIEW) {
+            return new vh_footview(LayoutInflater.from(parent.getContext()).inflate(R.layout.footview,parent,false));
         }
 
         return null;
@@ -77,12 +80,21 @@ public class WelfareAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return lists.size();
+        return lists.size()+1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return WELFARE;
+        if (position + 1 == getItemCount()) {
+            return FOOTVIEW;
+        }else {
+            return WELFARE;
+        }
+    }
+
+    public void addMoreDatas(List<WelfareBean> newDatas) {
+        lists.addAll(newDatas);
+        notifyDataSetChanged();
     }
 
     private class vh_welfare extends RecyclerView.ViewHolder {
@@ -93,6 +105,12 @@ public class WelfareAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(inflate);
             image = (ImageView) inflate.findViewById(R.id.item_welfare_image);
             author = (TextView) inflate.findViewById(R.id.item_welfare_author);
+        }
+    }
+
+    private class vh_footview extends RecyclerView.ViewHolder {
+        public vh_footview(View inflate) {
+            super(inflate);
         }
     }
 }

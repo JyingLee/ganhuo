@@ -39,7 +39,7 @@ public class IosFragment extends Fragment implements IosContract.View {
     private int lastVisibleItemPosition;
     private boolean isLoading = false;//是否在上拉加载
     private boolean isRolling = false;//是否在刷新
-
+    private boolean isInit = false;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -53,14 +53,21 @@ public class IosFragment extends Fragment implements IosContract.View {
                             initRecyclewView();
                             break;
                         case 1:
-                            iosDatas = (List<IosBean>) msg.obj;
-                            if (iosDatas != null) {
-                                iosAdapter.notifyDataSetChanged();
-                                showToast("已更新数据");
+                            if (isInit == true) {
+                                iosDatas = (List<IosBean>) msg.obj;
+                                if (iosDatas != null) {
+                                    iosAdapter.notifyDataSetChanged();
+                                    showToast("已更新数据");
+                                }
+                                isRolling = false;
+                                setRecyclewViewBug();
+                                refreshLayout.setRefreshing(false);
+                            } else {
+                                presenter.getIosData(handler, iosDatas, 0);
+                                isRolling = false;
+                                setRecyclewViewBug();
+                                refreshLayout.setRefreshing(false);
                             }
-                            isRolling = false;
-                            setRecyclewViewBug();
-                            refreshLayout.setRefreshing(false);
                             break;
                         case 2:
                             List<IosBean> newDatas = (List<IosBean>) msg.obj;
@@ -111,6 +118,7 @@ public class IosFragment extends Fragment implements IosContract.View {
                 lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
             }
         });
+        isInit = true;
     }
 
     public static IosFragment newInstance(int count) {

@@ -38,7 +38,8 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
     private SwipeRefreshLayout refreshLayout;
     private boolean isLoading = false;
     private int lastVisibleItemPosition;//最后一个可见的item
-    private boolean isRolling=false;
+    private boolean isRolling = false;
+    private boolean isInit = false;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -52,17 +53,24 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
                             initRecyclewView();
                             break;
                         case 1:
-                            androidData = (List<AndroidBean>) msg.obj;
-                            if (androidData != null) {
-                                androidAdapter.notifyDataSetChanged();
-                                showToast("已更新数据");
+                            if (isInit == false) {
+                                presenter.getAndroidData(handler, androidData, 0);
+                                isRolling = false;
+                                setRecyclewViewBug();
+                                refreshLayout.setRefreshing(false);
+                            } else {
+                                androidData = (List<AndroidBean>) msg.obj;
+                                if (androidData != null) {
+                                    androidAdapter.notifyDataSetChanged();
+                                    showToast("已更新数据");
+                                }
+                                isRolling = false;
+                                setRecyclewViewBug();
+                                refreshLayout.setRefreshing(false);
                             }
-                            isRolling=false;
-                            setRecyclewViewBug();
-                            refreshLayout.setRefreshing(false);
                             break;
                         case 2:
-                            List<AndroidBean>newDaras=(List<AndroidBean>) msg.obj;
+                            List<AndroidBean> newDaras = (List<AndroidBean>) msg.obj;
                             androidAdapter.addMoreData(newDaras);
                             androidAdapter.notifyItemRemoved(androidAdapter.getItemCount());
                             break;
@@ -127,6 +135,7 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
                 lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
             }
         });
+        isInit = true;
     }
 
     @Override
@@ -155,7 +164,7 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
             public void onRefresh() {
                 refreshLayout.setRefreshing(true);
                 if (presenter.isNetworkAvailable(getActivity())) {
-                    isRolling=true;
+                    isRolling = true;
                     setRecyclewViewBug();
                     androidData.clear();
                     presenter.getAndroidData(handler, androidData, 1);
@@ -176,6 +185,7 @@ public class AndroidFragment extends Fragment implements AndroidContract.View {
     public void showToast(CharSequence msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
+
     public void setRecyclewViewBug() {
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override

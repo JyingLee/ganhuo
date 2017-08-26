@@ -1,5 +1,9 @@
 package com.jying.ganhuo.Module.welfare;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
@@ -12,7 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -44,29 +47,31 @@ public class WelfarePresenter implements WelfareContract.Presenter {
     }
 
     @Override
-    public void getWelareData(final Handler handler) {
-        final List<WelfareBean> lists = new ArrayList<>();
+    public void getWelareData(final Handler handler, final List<WelfareBean> welfareDatas, final int flag) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Key.RANDOM_API).build();
         GanhuoService ganhuoService = retrofit.create(GanhuoService.class);
-        Call<ResponseBody> call = ganhuoService.getData("福利", 10);
+        Call<ResponseBody> call = ganhuoService.getData("福利", 6);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    String json = response.body().string();
-                    JSONObject jsonObject = new JSONObject(json);
-                    JSONArray jsonArray = jsonObject.getJSONArray("results");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        WelfareBean welfareBean = new WelfareBean();
-                        JSONObject dealjson = jsonArray.getJSONObject(i);
-                        welfareBean.setImage_url(dealjson.getString("url"));
-                        welfareBean.setImage_who(dealjson.getString("who"));
-                        lists.add(welfareBean);
-                    }
-                    Message message = new Message();
-                    message.obj = lists;
-                    message.what = 0;
-                    handler.sendMessage(message);
+                        String json = response.body().string();
+                        JSONObject jsonObject = new JSONObject(json);
+                        JSONArray jsonArray = jsonObject.getJSONArray("results");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            WelfareBean welfareBean = new WelfareBean();
+                            JSONObject dealjson = jsonArray.getJSONObject(i);
+                            welfareBean.setImage_url(dealjson.getString("url"));
+                            welfareBean.setImage_who(dealjson.getString("who"));
+                            welfareDatas.add(welfareBean);
+                        }
+                        Message message = new Message();
+                        message.obj = welfareDatas;
+                        message.what = 0;
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("welfare_flag", flag);
+                        message.setData(bundle);
+                        handler.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -79,5 +84,32 @@ public class WelfarePresenter implements WelfareContract.Presenter {
 
             }
         });
+    }
+
+    public boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                // 当前网络是连接的
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
+                    // 当前所连接的网络可用
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int getArrayMax(int[] position) {
+        int max = position[0];
+        for (int value : position) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
     }
 }

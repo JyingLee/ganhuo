@@ -1,5 +1,9 @@
 package com.jying.ganhuo.Module.video;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
@@ -12,7 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -42,16 +45,14 @@ public class VideoPresenter implements VideoContract.Presenter {
     }
 
     @Override
-    public void getVideoData(final Handler handler) {
-        final List<VideoBean> lists = new ArrayList<>();
+    public void getVideoData(final Handler handler,final List<VideoBean> videoDatas,final int flag) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Key.RANDOM_API).build();
         GanhuoService ganhuoService = retrofit.create(GanhuoService.class);
-        Call<ResponseBody> call = ganhuoService.getData("休息视频", 20);
+        Call<ResponseBody> call = ganhuoService.getData("休息视频", 8);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    if (response.body().string() != null) {
                         String json = response.body().string();
                         if (json == null) return;
                         JSONObject jsonObject = new JSONObject(json);
@@ -63,13 +64,15 @@ public class VideoPresenter implements VideoContract.Presenter {
                             data.setDesc(dealData.getString("desc"));
                             data.setTime(dealData.getString("createdAt"));
                             data.setUrl(dealData.getString("url"));
-                            lists.add(data);
+                            videoDatas.add(data);
                         }
                         Message message = new Message();
                         message.what = 0;
-                        message.obj = lists;
+                        message.obj = videoDatas;
+                        Bundle bundle=new Bundle();
+                        bundle.putInt("video_flag",flag);
+                        message.setData(bundle);
                         handler.sendMessage(message);
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -82,5 +85,20 @@ public class VideoPresenter implements VideoContract.Presenter {
 
             }
         });
+    }
+    public boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                // 当前网络是连接的
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
+                    // 当前所连接的网络可用
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

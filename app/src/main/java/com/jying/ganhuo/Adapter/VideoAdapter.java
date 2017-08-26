@@ -23,6 +23,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private List<VideoBean> lists;
     Context context;
     private static final int VIDEO = 1;
+    private static final int FOOTVIEW=2;
 
     public VideoAdapter(List<VideoBean> lists, Context context) {
         this.lists = lists;
@@ -33,6 +34,8 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIDEO) {
             return new vh_video(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video, parent, false));
+        } else if (viewType == FOOTVIEW) {
+            return new vh_footview(LayoutInflater.from(parent.getContext()).inflate(R.layout.footview,parent,false));
         }
         return null;
     }
@@ -57,12 +60,21 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return lists.size();
+        return lists.size()+1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return VIDEO;
+        if (position + 1 == getItemCount()) {
+            return FOOTVIEW;
+        }else {
+            return VIDEO;
+        }
+    }
+
+    public void addMoreDatas(List<VideoBean> newDatas) {
+        lists.addAll(newDatas);
+        notifyDataSetChanged();
     }
 
     private class vh_video extends RecyclerView.ViewHolder {
@@ -77,6 +89,12 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             time = (TextView) inflate.findViewById(R.id.item_video_time);
             desc = (TextView) inflate.findViewById(R.id.item_video_desc);
             layout = (LinearLayout) inflate.findViewById(R.id.item_video_layout);
+        }
+    }
+
+    private class vh_footview extends RecyclerView.ViewHolder {
+        public vh_footview(View inflate) {
+            super(inflate);
         }
     }
 }

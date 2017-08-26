@@ -50,37 +50,36 @@ public class AndroidPresenter implements AndroidContract.Presenter {
     public void getAndroidData(final Handler handler, final List<AndroidBean> androidDatas, final int flag) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Key.RANDOM_API).build();
         GanhuoService ganhuoService = retrofit.create(GanhuoService.class);
-        Call<ResponseBody> call = ganhuoService.getData("Android",8);
+        Call<ResponseBody> call = ganhuoService.getData("Android", 8);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    String json = response.body().string();
-                    JSONObject jsonObject = new JSONObject(json);
-                    JSONArray jsonArray = jsonObject.getJSONArray("results");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        AndroidBean bean = new AndroidBean();
-                        JSONObject dataJson = jsonArray.getJSONObject(i);
-                        bean.setDesc(dataJson.getString("desc"));
-                        bean.setTime(dataJson.getString("createdAt"));
-                        bean.setAuthor(dataJson.getString("who"));
-                        bean.setUrl(dataJson.getString("url"));
-                        if (dataJson.has("images")) {
-                            String image_url;
-                            JSONArray urljason = new JSONArray(dataJson.getString("images"));
-                            image_url = (String) urljason.opt(0);
-                            bean.setImage_url(image_url);
+                        String json = response.body().string();
+                        JSONObject jsonObject = new JSONObject(json);
+                        JSONArray jsonArray = jsonObject.getJSONArray("results");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            AndroidBean bean = new AndroidBean();
+                            JSONObject dataJson = jsonArray.getJSONObject(i);
+                            bean.setDesc(dataJson.getString("desc"));
+                            bean.setTime(dataJson.getString("createdAt"));
+                            bean.setAuthor(dataJson.getString("who"));
+                            bean.setUrl(dataJson.getString("url"));
+                            if (dataJson.has("images")) {
+                                String image_url;
+                                JSONArray urljason = new JSONArray(dataJson.getString("images"));
+                                image_url = (String) urljason.opt(0);
+                                bean.setImage_url(image_url);
+                            }
+                            androidDatas.add(bean);
                         }
-                        androidDatas.add(bean);
-                    }
-                    Message msg = new Message();
-                    msg.obj = androidDatas;
-                    msg.what = 0;
-                    Bundle bundle=new Bundle();
-                    bundle.putInt("flag",flag);
-                    msg.setData(bundle);
-                    handler.sendMessage(msg);
-
+                        Message msg = new Message();
+                        msg.obj = androidDatas;
+                        msg.what = 0;
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("flag", flag);
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -96,7 +95,7 @@ public class AndroidPresenter implements AndroidContract.Presenter {
     }
 
 
-    public  boolean isNetworkAvailable(Context context) {
+    public boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
